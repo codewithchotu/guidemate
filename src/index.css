@@ -401,3 +401,323 @@ body.dark-mode {
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
+
+/* =====================================================
+   MOBILE RESPONSIVENESS - Media Queries
+   ===================================================== */
+
+/* Tablet Screens (768px and below) */
+@media (max-width: 768px) {
+  /* Font Sizes */
+  body {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  h1 { font-size: 28px !important; }
+  h2 { font-size: 24px !important; }
+  h3 { font-size: 20px !important; }
+  h4 { font-size: 18px !important; }
+  h5 { font-size: 16px !important; }
+  h6 { font-size: 14px !important; }
+
+  /* Spacing Adjustments */
+  .container { padding: 0 16px !important; }
+  
+  .main-content {
+    padding-bottom: 40px;
+  }
+
+  /* Blobs - Make smaller for mobile */
+  .blob-primary {
+    width: 300px !important;
+    height: 300px !important;
+    top: -5% !important;
+    left: -10% !important;
+    opacity: 0.15 !important;
+  }
+
+  .blob-secondary {
+    width: 250px !important;
+    height: 250px !important;
+    bottom: -5% !important;
+    right: -10% !important;
+    opacity: 0.15 !important;
+  }
+
+  .blob-accent {
+    width: 200px !important;
+    height: 200px !important;
+    top: 50% !important;
+    left: 40% !important;
+    opacity: 0.12 !important;
+  }
+
+  /* Buttons */
+  .gradient-btn {
+    padding: 12px 20px !important;
+    font-size: 0.9rem !important;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .btn-secondary {
+    padding: 12px 20px !important;
+    font-size: 0.9rem !important;
+    width: 100%;
+  }
+
+  /* Input Fields */
+  .input-field {
+    padding: 12px 14px !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+
+  /* SOS Button - Smaller on mobile */
+  .sos-pulse-btn {
+    width: 120px !important;
+    height: 120px !important;
+    font-size: 1.2rem !important;
+  }
+
+  /* Glass Cards */
+  .glass-card {
+    padding: 16px !important;
+  }
+
+  .glass-panel {
+    border-radius: 16px !important;
+  }
+
+  /* Badges */
+  .badge {
+    font-size: 0.75rem !important;
+    padding: 4px 10px !important;
+  }
+
+  /* Grid Adjustments */
+  .grid-cols-12 {
+    gap: 16px !important;
+  }
+
+  .col-span-8,
+  .col-span-6,
+  .col-span-4,
+  .col-span-3,
+  .col-span-12 {
+    grid-column: span 12 !important;
+  }
+
+  /* Timeline */
+  .timeline-container::before {
+    left: 8px !important;
+  }
+
+  .timeline-item {
+    margin-left: 40px !important;
+    margin-bottom: 30px !important;
+  }
+
+  .timeline-dot {
+    width: 18px !important;
+    height: 18px !important;
+    left: -38px !important;
+    top: 5px !important;
+  }
+}
+
+/* Small Devices (480px and below) */
+@media (max-width: 480px) {
+  /* Root Font Sizing */
+  :root {
+    --radius-xl: 16px;
+    --radius-lg: 12px;
+    --radius-md: 8px;
+  }
+
+  body {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  /* Headings - Extra small */
+  h1 { font-size: 24px !important; }
+  h2 { font-size: 20px !important; }
+  h3 { font-size: 18px !important; }
+  h4 { font-size: 16px !important; }
+  h5 { font-size: 14px !important; }
+  h6 { font-size: 12px !important; }
+
+  /* Container */
+  .container { padding: 0 12px !important; }
+
+  .main-content {
+    padding-bottom: 30px;
+  }
+
+  /* Blobs - Hide or minimize on very small screens */
+  .blob-primary {
+    width: 200px !important;
+    height: 200px !important;
+    opacity: 0.08 !important;
+  }
+
+  .blob-secondary {
+    width: 180px !important;
+    height: 180px !important;
+    opacity: 0.08 !important;
+  }
+
+  .blob-accent {
+    width: 150px !important;
+    height: 150px !important;
+    opacity: 0.06 !important;
+  }
+
+  /* Buttons - Full width and stacked */
+  .gradient-btn {
+    padding: 10px 16px !important;
+    font-size: 0.85rem !important;
+    width: 100% !important;
+    border-radius: 8px !important;
+    margin-bottom: 8px;
+  }
+
+  .gradient-btn:hover {
+    transform: none !important;
+  }
+
+  .btn-secondary {
+    padding: 10px 16px !important;
+    font-size: 0.85rem !important;
+    width: 100% !important;
+    border-radius: 8px !important;
+  }
+
+  .btn-secondary:hover {
+    transform: none !important;
+  }
+
+  /* Input Fields */
+  .input-field {
+    padding: 10px 12px !important;
+    font-size: 16px !important;
+    border-radius: 8px !important;
+  }
+
+  /* SOS Button - Much smaller on phones */
+  .sos-pulse-btn {
+    width: 100px !important;
+    height: 100px !important;
+    font-size: 1rem !important;
+    border: 3px solid rgba(255, 255, 255, 0.4) !important;
+  }
+
+  .sos-pulse-btn:hover {
+    transform: scale(1.02) !important;
+  }
+
+  /* Glass Cards */
+  .glass-card {
+    padding: 12px !important;
+    border-radius: 12px !important;
+  }
+
+  .glass-card:hover {
+    transform: none !important;
+  }
+
+  .glass-panel {
+    border-radius: 12px !important;
+  }
+
+  /* Badges */
+  .badge {
+    font-size: 0.7rem !important;
+    padding: 3px 8px !important;
+  }
+
+  /* Grid Adjustments */
+  .grid-cols-12 {
+    gap: 12px !important;
+  }
+
+  /* All columns should be full width */
+  [class*="col-span-"] {
+    grid-column: span 12 !important;
+  }
+
+  /* Timeline - Further adjustments */
+  .timeline-container::before {
+    left: 6px !important;
+  }
+
+  .timeline-item {
+    margin-left: 30px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .timeline-dot {
+    width: 16px !important;
+    height: 16px !important;
+    left: -32px !important;
+    top: 3px !important;
+  }
+
+  /* Animation adjustments for mobile */
+  @keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(2deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+  }
+}
+
+/* Extra Small Devices (360px and below) */
+@media (max-width: 360px) {
+  .container { padding: 0 8px !important; }
+
+  h1 { font-size: 20px !important; }
+  h2 { font-size: 18px !important; }
+  h3 { font-size: 16px !important; }
+
+  .gradient-btn {
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .input-field {
+    padding: 8px 10px !important;
+    font-size: 15px !important;
+  }
+
+  .sos-pulse-btn {
+    width: 90px !important;
+    height: 90px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .badge {
+    font-size: 0.65rem !important;
+  }
+}
+
+/* Landscape Orientation - Tablets */
+@media (max-height: 600px) and (orientation: landscape) {
+  .main-content {
+    padding-bottom: 20px;
+  }
+
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+  
+  .gradient-btn {
+    padding: 8px 16px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .sos-pulse-btn {
+    width: 80px !important;
+    height: 80px !important;
+    font-size: 0.9rem !important;
+  }
+}
