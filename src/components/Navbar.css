@@ -1,0 +1,69 @@
+/* Navbar.css */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  background-color: #FFFFFF !important;
+  border-bottom: 1px solid #EAEAEA !important;
+  z-index: 1000;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important;
+}
+
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-maroon);
+}
+
+.navbar-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #444444;
+  font-weight: 500;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  position: relative;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navbar-link:hover {
+  color: var(--color-maroon) !important;
+  opacity: 0.95;
+}
+
+.dropdown-item {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #F8F5F2 !important;
+  color: var(--color-maroon) !important;
+}
+
+.hover-opacity:hover {
+  opacity: 0.8;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-menu {
+    display: none !important;
+  }
+  .mobile-menu-toggle {
+    display: flex !important;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+}
