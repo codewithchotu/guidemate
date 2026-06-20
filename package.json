@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:server": "node server/index.js",
+    "dev:all": "concurrently \"npm run dev\" \"node server/index.js\"",
     "build": "vite build",
     "server": "node server/index.js"
   },
@@ -16,6 +18,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.2",
+    "concurrently": "^10.0.3",
     "vite": "^8.0.16"
   }
 }

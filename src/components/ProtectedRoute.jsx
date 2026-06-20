@@ -23,12 +23,12 @@ export default function ProtectedRoute({ children, allowedRoles }) {
   }
 
   if (!isAuthenticated) {
-    // Redirect to home/login page if not logged in
-    return <Navigate to="/" replace />;
+    // Redirect to dedicated login page if not logged in
+    return <Navigate to="/login" replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(userRole)) {
-    // Redirect to home if user does not have permission
+    // Redirect to home/dashboard if user does not have permission
     return <Navigate to="/" replace />;
   }
 

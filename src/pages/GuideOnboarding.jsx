@@ -274,34 +274,123 @@ export default function GuideOnboarding() {
           {/* Step 6: Package Selection */}
           {currentStep === 6 && (
             <div>
-              <p style={{ marginBottom: '16px', color: 'var(--color-text-light)' }}>
+              <p style={{ marginBottom: '20px', color: 'var(--color-text-secondary)', fontSize: '15px' }}>
                 Select which packages you want to offer to travelers:
               </p>
-              <div style={{ display: 'grid', gap: '12px' }}>
-                {Object.entries(GUIDE_PACKAGES).map(([key, pkg]) => (
-                  <label key={key} style={{
-                    display: 'flex',
-                    gap: '12px',
-                    cursor: 'pointer',
-                    padding: '12px',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-md)',
-                    backgroundColor: formData.packages.includes(pkg.id) ? 'var(--color-beige)' : 'transparent'
-                  }}>
-                    <input
-                      type="checkbox"
-                      checked={formData.packages.includes(pkg.id)}
-                      onChange={() => handleMultiSelect('packages', pkg.id)}
-                    />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600 }}>{pkg.icon} {pkg.name}</div>
-                      <p style={{ fontSize: '13px', color: 'var(--color-text-light)', margin: 0 }}>
+              <div style={{ display: 'grid', gap: '16px' }}>
+                {Object.entries(GUIDE_PACKAGES).map(([key, pkg]) => {
+                  const isSelected = formData.packages.includes(pkg.id);
+                  return (
+                    <label 
+                      key={key} 
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                        cursor: 'pointer',
+                        padding: '20px',
+                        border: isSelected ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
+                        borderRadius: '12px',
+                        backgroundColor: isSelected ? '#FAF2F3' : '#FFFFFF',
+                        boxShadow: isSelected ? '0 6px 20px rgba(109, 41, 50, 0.08)' : 'var(--shadow-sm)',
+                        transition: 'all 0.25s ease',
+                        position: 'relative',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {/* Selection indicator border accent */}
+                      {isSelected && (
+                        <div style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '4px',
+                          height: '100%',
+                          backgroundColor: 'var(--color-primary)'
+                        }} />
+                      )}
+
+                      {/* Hidden Input to remove tick box */}
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleMultiSelect('packages', pkg.id)}
+                        style={{ display: 'none' }}
+                      />
+
+                      {/* Header containing name and price */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ 
+                          fontSize: '20px', 
+                          fontWeight: '700', 
+                          color: 'var(--color-primary-dark)', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '8px' 
+                        }}>
+                          <span>{pkg.icon}</span>
+                          <span>{pkg.name}</span>
+                        </div>
+                        <div style={{ 
+                          fontSize: '18px', 
+                          fontWeight: '800', 
+                          color: 'var(--color-primary)' 
+                        }}>
+                          ₹{pkg.basePrice}/h
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      <p style={{ 
+                        fontSize: '14px', 
+                        color: 'var(--color-text-secondary)', 
+                        margin: '4px 0 8px 0',
+                        lineHeight: '1.4' 
+                      }}>
                         {pkg.description}
                       </p>
-                    </div>
-                    <div style={{ fontWeight: 700, color: 'var(--color-gold)' }}>₹{pkg.basePrice}/h</div>
-                  </label>
-                ))}
+
+                      {/* Requirements */}
+                      <div style={{ 
+                        borderTop: '1px solid rgba(0,0,0,0.06)', 
+                        paddingTop: '8px', 
+                        marginTop: '4px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '4px'
+                      }}>
+                        <div style={{ 
+                          fontSize: '13px', 
+                          color: '#666', 
+                          display: 'flex', 
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}>
+                          <span style={{ fontWeight: 600, color: '#444' }}>💼 Experience:</span> 
+                          <span>{pkg.requirements.experience}</span>
+                        </div>
+                        
+                        {(pkg.requirements.rating || pkg.requirements.languages) && (
+                          <div style={{ 
+                            fontSize: '13px', 
+                            color: '#666', 
+                            display: 'flex', 
+                            alignItems: 'center',
+                            gap: '6px'
+                          }}>
+                            <span style={{ fontWeight: 600, color: '#444' }}>📋 Additional:</span>
+                            <span>
+                              {pkg.requirements.rating ? `Min Rating: ${pkg.requirements.rating}⭐` : ''}
+                              {pkg.requirements.rating && pkg.requirements.languages ? ' • ' : ''}
+                              {pkg.requirements.languages ? `Lang: ${pkg.requirements.languages}` : ''}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                    </label>
+                  );
+                })}
               </div>
             </div>
           )}

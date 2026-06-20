@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { AppProvider } from "./context/AppContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import GuideMateAI from "./components/GuideMateAI";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -20,6 +21,7 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import GuideDashboard from "./pages/GuideDashboard";
+import LoginPage from "./pages/LoginPage";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -36,9 +38,14 @@ function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/features" element={<FeaturesPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/login" element={<LoginPage />} />
               
               {/* Traveler Routes */}
-              <Route path="/traveler/home" element={<TravelerHome />} />
+              <Route path="/traveler/home" element={
+                <ProtectedRoute allowedRoles={['traveler', 'supervisor']}>
+                  <TravelerHome />
+                </ProtectedRoute>
+              } />
               
               {/* Guide Routes (Protected) */}
               <Route path="/guide/onboarding" element={
@@ -70,6 +77,8 @@ function App() {
             </Routes>
           </main>
           <Footer />
+          {/* Floating GuideMate AI Concierge - visible on all pages */}
+          <GuideMateAI />
         </BrowserRouter>
       </AppProvider>
     </AuthProvider>

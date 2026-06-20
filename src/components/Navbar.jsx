@@ -2,7 +2,7 @@ import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import AuthModal from './AuthModal';
-import { Bell, ChevronDown, User, BookOpen, Settings, LogOut, Menu, X } from 'lucide-react';
+import { Bell, ChevronDown, User, BookOpen, Settings, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -13,6 +13,20 @@ export default function Navbar() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState('login');
   
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
+
   const dropdownRef = useRef(null);
 
   // Close dropdown on click outside
@@ -41,7 +55,10 @@ export default function Navbar() {
   };
 
   const getFirstName = (name) => {
-    if (!name) return 'User';
+    if (!name || name.startsWith('http')) {
+      if (user?.email) return user.email.split('@')[0];
+      return 'User';
+    }
     return name.split(' ')[0];
   };
 
@@ -64,14 +81,16 @@ export default function Navbar() {
       }}>
         
         {/* Left Side: Logo */}
-        <div className="navbar-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+        <div className="navbar-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src="/logo.png" alt="GuideMate Logo" style={{ height: '36px', objectFit: 'contain' }} />
           <span className="logo-text" style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: '24px',
             fontWeight: 800,
-            color: 'var(--color-maroon)',
             letterSpacing: '-0.5px'
-          }}>GuideMate</span>
+          }}>
+            <span style={{ color: '#6D2932' }}>Guide</span><span style={{ color: '#A68A64' }}>Mate</span>
+          </span>
         </div>
 
         {/* Center: Menu Items */}
@@ -139,6 +158,27 @@ export default function Navbar() {
 
         {/* Right Side: Notifications & Avatar Dropdown */}
         <div className="navbar-cta" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          {/* Theme Toggle Button */}
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--color-text-secondary)',
+              padding: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              backgroundColor: 'var(--color-bg-tertiary)',
+              transition: 'background-color 0.2s'
+            }}
+            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {darkMode ? <Sun size={20} style={{ color: '#C6A969' }} /> : <Moon size={20} style={{ color: '#6D2932' }} />}
+          </button>
+
           {isAuthenticated ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               
@@ -185,9 +225,21 @@ export default function Navbar() {
                     justifyContent: 'center',
                     fontWeight: 700,
                     fontSize: '14px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.06)'
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.06)',
+                    overflow: 'hidden'
                   }}>
-                    {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    {user.photoURL && user.photoURL.startsWith('http') ? (
+                      <img 
+                        src={user.photoURL} 
+                        alt="Avatar" 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <span>{user.name && !user.name.startsWith('http') ? user.name.charAt(0).toUpperCase() : 'U'}</span>
+                    )}
                   </div>
                   <span style={{
                     fontFamily: "'Inter', sans-serif",
@@ -310,14 +362,14 @@ export default function Navbar() {
             <>
               <button 
                 className="btn btn-ghost btn-sm"
-                onClick={() => { setAuthModalTab('login'); setAuthModalOpen(true); }}
+                onClick={() => navigate('/login')}
                 style={{ fontSize: '13px', fontWeight: 600 }}
               >
                 Sign In
               </button>
               <button 
                 className="btn btn-primary btn-sm"
-                onClick={() => { setAuthModalTab('signup'); setAuthModalOpen(true); }}
+                onClick={() => navigate('/login')}
                 style={{ fontSize: '13px', fontWeight: 600 }}
               >
                 Get Started
@@ -371,8 +423,7 @@ export default function Navbar() {
                 if (isAuthenticated) {
                   navigate('/guide/onboarding');
                 } else {
-                  setAuthModalTab('signup');
-                  setAuthModalOpen(true);
+                  navigate('/login');
                 }
               }}
               className="navbar-mobile-link"
@@ -404,6 +455,40 @@ export default function Navbar() {
               Dashboard
             </span>
           )}
+          
+          {/* Mobile Theme Toggle */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '12px 0 4px 0',
+            borderTop: '1px solid var(--color-divider)',
+            marginTop: '8px'
+          }}>
+            <span style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '14px',
+              fontWeight: 600,
+              color: 'var(--color-text-secondary)'
+            }}>Theme Toggle</span>
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--color-text-secondary)',
+                padding: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                backgroundColor: 'var(--color-bg-tertiary)'
+              }}
+            >
+              {darkMode ? <Sun size={20} style={{ color: '#C6A969' }} /> : <Moon size={20} style={{ color: '#6D2932' }} />}
+            </button>
+          </div>
         </div>
       )}
 

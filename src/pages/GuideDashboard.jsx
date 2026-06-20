@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { wsService } from '../services/websocket';
 import WeatherWidget from '../components/WeatherWidget';
+import GuideMap from '../components/GuideMap';
 import { Sparkles, Power, Award, TrendingUp, CheckCircle, Clock, Percent, Shield, Send, AlertOctagon } from 'lucide-react';
 
 export default function GuideDashboard() {
@@ -26,6 +27,7 @@ export default function GuideDashboard() {
   const [matchingRequest, setMatchingRequest] = useState(null);
   const [countdown, setCountdown] = useState(15);
   const [activeBooking, setActiveBooking] = useState(null);
+  const [travelerLocation, setTravelerLocation] = useState(null);
   
   // Chat States
   const [messages, setMessages] = useState([]);
@@ -72,11 +74,40 @@ export default function GuideDashboard() {
         setMessages(prev => [...prev, message]);
       });
 
+      // Geolocation watch for guide reporting to traveler
+      let watchId = null;
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            wsService.updateLocation(pos.coords.latitude, pos.coords.longitude);
+          },
+          (err) => console.log('Geolocation initial error:', err)
+        );
+
+        watchId = navigator.geolocation.watchPosition(
+          (pos) => {
+            wsService.updateLocation(pos.coords.latitude, pos.coords.longitude);
+          },
+          (err) => console.log('Geolocation watch error:', err),
+          { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+        );
+      }
+
+      // Listen for traveler location updates
+      const unsubscribeTravelerLoc = wsService.subscribe('traveler_location_update', ({ lat, lng }) => {
+        console.log('Received traveler location update:', lat, lng);
+        setTravelerLocation({ lat, lng });
+      });
+
       return () => {
         unsubscribeRequest();
         unsubscribeTimeout();
         unsubscribeConfirm();
         unsubscribeChat();
+        unsubscribeTravelerLoc();
+        if (watchId) {
+          navigator.geolocation.clearWatch(watchId);
+        }
         wsService.disconnect();
       };
     }
@@ -180,20 +211,39 @@ export default function GuideDashboard() {
             <h3 style={{ margin: '0 0 16px 0', color: 'var(--color-maroon)', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <CheckCircle size={22} /> Active Guide Mission
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr 2fr', gap: '24px' }}>
               <div>
                 <p style={{ margin: '0 0 8px 0' }}><strong>Destination:</strong> {activeBooking.destination}</p>
                 <p style={{ margin: '0 0 8px 0' }}><strong>Duration:</strong> {activeBooking.duration} Days</p>
                 <p style={{ margin: '0 0 8px 0' }}><strong>Group Size:</strong> {activeBooking.groupSize} Traveler(s)</p>
-                <p style={{ margin: '0 0 8px 0' }}><strong>Expected Earnings:</strong> ₹{Math.round(activeBooking.totalPrice * 0.85).toLocaleString()}</p>
+                <p style={{ margin: '0 0 12px 0', color: '#27AE60', fontWeight: 700 }}><strong>Expected Earnings:</strong> ₹{Math.round(activeBooking.totalPrice * 0.85).toLocaleString()}</p>
                 
+                {travelerLocation ? (
+                  <div style={{ backgroundColor: 'rgba(39, 174, 96, 0.1)', padding: '10px', borderRadius: '8px', fontSize: '11px', color: '#27AE60', marginBottom: '12px', fontWeight: 600 }}>
+                    📡 GPS Linked: Live tracking traveler in real-time
+                  </div>
+                ) : (
+                  <div style={{ backgroundColor: 'rgba(243, 156, 18, 0.1)', padding: '10px', borderRadius: '8px', fontSize: '11px', color: '#E67E22', marginBottom: '12px', fontWeight: 600 }}>
+                    ⏳ Awaiting traveler browser GPS stream...
+                  </div>
+                )}
+
                 <button 
                   className="btn btn-ghost btn-sm" 
-                  style={{ marginTop: '16px' }}
-                  onClick={() => { setActiveBooking(null); setMessages([]); }}
+                  style={{ marginTop: '4px', width: '100%' }}
+                  onClick={() => { setActiveBooking(null); setMessages([]); setTravelerLocation(null); }}
                 >
                   Complete Excursion
                 </button>
+              </div>
+
+              {/* Live tracking map column */}
+              <div style={{ height: '240px', position: 'relative' }}>
+                <GuideMap 
+                  guides={[]} 
+                  city={activeBooking.destination} 
+                  travelerLocation={travelerLocation} 
+                />
               </div>
 
               {/* Chat translation module */}

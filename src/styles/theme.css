@@ -3,42 +3,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
 
 :root {
+  /* =============================================
+   * GuideMate Design System — Bold Black + Warm Gold
+   * Inspired by: OpenAI · Linear · Stripe · Notion
+   * ============================================= */
+
   /* Primary Colors */
-  --color-primary: #6D2932;
-  --color-primary-dark: #4A1E25;
-  --color-secondary: #4A1E25;
+  --color-primary: #000000;
+  --color-primary-dark: #111111;
+  --color-secondary: #FFFFFF;
+  
+  /* Accent — Warm Gold */
+  --color-accent: #F59E0B;
+  --color-accent-hover: #D97706;
+  --color-accent-light: #FCD34D;
   
   /* Background & Surface */
   --color-bg: #FFFFFF;
-  --color-bg-secondary: #FAF7F2;
-  --color-bg-tertiary: #F5F5F5;
+  --color-bg-secondary: #F9FAFB;
+  --color-bg-tertiary: #F3F4F6;
   --color-surface: #FFFFFF;
   
   /* Text Colors */
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #666666;
-  --color-text-tertiary: #999999;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #9CA3AF;
   
-  /* Accent */
-  --color-accent: #C6A969;
-  --color-accent-light: #E8DCC8;
+  /* Legacy aliases — now resolved to Black/Gold */
+  --color-maroon: #000000;
+  --color-cream: #F9FAFB;
   
   /* Semantic */
-  --color-success: #16A34A;
-  --color-warning: #EA8C55;
-  --color-error: #DC2626;
-  --color-info: #0284C7;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #C6A969;
   
   /* Borders & Dividers */
-  --color-border: #E5E5E5;
-  --color-divider: #F0F0F0;
+  --color-border: #E5E7EB;
+  --color-divider: #F3F4F6;
   
   /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.08), 0 10px 10px rgba(0, 0, 0, 0.03);
   
   
   /* Spacing Scale */
@@ -91,6 +101,9 @@
   --z-modal-bg: 40;
   --z-modal: 50;
   --z-tooltip: 60;
+  
+  --color-maroon: #06B6D4;
+  --color-cream: #F9FAFB;
 }
 
 * {
@@ -161,13 +174,13 @@ p:last-child {
 }
 
 a {
-  color: var(--color-primary);
+  color: var(--color-accent);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-hover);
 }
 
 /* Container */
@@ -260,13 +273,13 @@ a:hover {
 }
 
 .btn-primary {
-  background-color: var(--color-primary);
+  background-color: var(--color-accent);
   color: white;
   box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover {
-  background-color: var(--color-primary-dark);
+  background-color: var(--color-accent-hover);
   box-shadow: var(--shadow-lg);
 }
 
@@ -292,12 +305,12 @@ a:hover {
 }
 
 .btn-accent {
-  background-color: var(--color-accent);
+  background-color: var(--color-primary);
   color: white;
 }
 
 .btn-accent:hover {
-  background-color: #B59652;
+  background-color: var(--color-primary-dark);
 }
 
 .btn-sm {
@@ -326,8 +339,8 @@ input, textarea, select {
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(109, 41, 50, 0.1);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12);
 }
 
 input::placeholder {
@@ -409,7 +422,7 @@ label {
   display: inline-block;
   padding: 4px 12px;
   background-color: var(--color-accent-light);
-  color: var(--color-primary);
+  color: var(--color-accent-hover);
   border-radius: var(--radius-full);
   font-size: var(--text-xs);
   font-weight: 600;
@@ -434,7 +447,7 @@ label {
 
 .loader {
   border: 3px solid var(--color-border);
-  border-top: 3px solid var(--color-primary);
+  border-top: 3px solid var(--color-accent);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -463,4 +476,207 @@ label {
   .grid-cols-2, .grid-cols-3, .grid-cols-4 {
     grid-template-columns: 1fr;
   }
+}
+
+/* ============================================ */
+/* DARK MODE OVERRIDES & PRESETS */
+/* ============================================ */
+
+body.dark-mode {
+  --color-bg: #0A0A0A;
+  --color-bg-secondary: #111111;
+  --color-bg-tertiary: #1A1A1A;
+  --color-surface: #111111;
+  
+  --color-text-primary: #F9FAFB;
+  --color-text-secondary: #9CA3AF;
+  --color-text-tertiary: #6B7280;
+  
+  --color-border: #1F2937;
+  --color-divider: #1F2937;
+  
+  --color-primary: #FFFFFF;
+  --color-primary-dark: #F9FAFB;
+  --color-secondary: #F9FAFB;
+  --color-maroon: #F59E0B;
+  --color-accent: #F59E0B;
+  --color-cream: #111111;
+
+  background-color: #0A0A0A !important;
+  color: #F9FAFB !important;
+}
+
+/* Force specific UI elements to adapt to dark variables */
+body.dark-mode .card,
+body.dark-mode .dashboard-card,
+body.dark-mode .planner-form,
+body.dark-mode .login-card,
+body.dark-mode .active-mission-card,
+body.dark-mode .about-section,
+body.dark-mode .features-section,
+body.dark-mode .contact-section {
+  background-color: #1E1E1E !important;
+  background: #1E1E1E !important;
+  color: #F5F5F7 !important;
+  border-color: #2D2D2D !important;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background-color: #2D2D2D !important;
+  color: #F5F5F7 !important;
+  border-color: #3D3D3D !important;
+}
+
+body.dark-mode .navbar {
+  background-color: #1E1E1E !important;
+  border-bottom-color: #2D2D2D !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;
+}
+
+body.dark-mode .navbar-link,
+body.dark-mode .navbar-logo span,
+body.dark-mode .logo-text {
+  color: #F5F5F7 !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode label,
+body.dark-mode strong {
+  color: #F5F5F7 !important;
+}
+
+body.dark-mode .active-mission-grid > div:last-child {
+  border-color: #2D2D2D !important;
+}
+
+body.dark-mode .active-mission-grid > div:last-child > div:nth-child(2) {
+  background-color: #121212 !important;
+}
+
+body.dark-mode .active-mission-grid > div:last-child > div:nth-child(2) > div {
+  background-color: #1E1E1E !important;
+  color: #F5F5F7 !important;
+}
+
+body.dark-mode .navbar-mobile-menu {
+  background-color: #1E1E1E !important;
+  border-top-color: #2D2D2D !important;
+}
+
+body.dark-mode .navbar-mobile-link {
+  color: #F5F5F7 !important;
+}
+
+body.dark-mode .dropdown-item {
+  color: #F5F5F7 !important;
+}
+body.dark-mode .dropdown-item:hover {
+  background-color: #2D2D2D !important;
+}
+
+body.dark-mode .timeline-day {
+  border-bottom-color: #2D2D2D !important;
+}
+
+body.dark-mode .attraction {
+  background-color: #2D2D2D !important;
+  color: #E5E5E5 !important;
+}
+
+body.dark-mode .stat-card,
+body.dark-mode .budget-card,
+body.dark-mode .guide-match-card {
+  background: linear-gradient(135deg, #1E1E1E 0%, #252525 100%) !important;
+  border-color: #2D2D2D !important;
+}
+
+body.dark-mode .match-reason {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-left-color: var(--color-primary) !important;
+}
+
+body.dark-mode .spec-badge,
+body.dark-mode .interest-chip {
+  background-color: #2D2D2D !important;
+  border-color: #3D3D3D !important;
+  color: #F5F5F7 !important;
+}
+
+body.dark-mode .interest-chip.active {
+  background-color: var(--color-primary) !important;
+  color: #121212 !important;
+}
+
+body.dark-mode .btn-ghost {
+  border-color: #2D2D2D !important;
+  color: #F5F5F7 !important;
+}
+body.dark-mode .btn-ghost:hover {
+  background-color: #2D2D2D !important;
+}
+
+body.dark-mode .glass-panel,
+body.dark-mode .glass-panel-heavy,
+body.dark-mode .glass-card {
+  background: rgba(30, 30, 30, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F5F5F7 !important;
+}
+
+/* Additional premium dark mode overrides for pages with inline styles or custom layouts */
+body.dark-mode .contact-page,
+body.dark-mode .about-page,
+body.dark-mode .login-page-container {
+  background-color: #121212 !important;
+}
+
+body.dark-mode .contact-page > div,
+body.dark-mode .about-page section,
+body.dark-mode .contact-page div[style*="backgroundColor"],
+body.dark-mode .contact-page div[style*="background-color"],
+body.dark-mode .about-page div[style*="backgroundColor"],
+body.dark-mode .about-page div[style*="background-color"] {
+  background-color: #1E1E1E !important;
+  background: #1E1E1E !important;
+  color: #F5F5F7 !important;
+  border-color: #2D2D2D !important;
+}
+
+body.dark-mode .hero {
+  background: linear-gradient(135deg, #121212 0%, #1E1E1E 100%) !important;
+}
+
+body.dark-mode .hero-preview {
+  background: #1E1E1E !important;
+  border-color: #2D2D2D !important;
+}
+
+body.dark-mode .footer {
+  background-color: #0F0F0F !important;
+  border-top: 1px solid #2D2D2D !important;
+}
+body.dark-mode .footer-title,
+body.dark-mode .footer-heading {
+  color: #F5F5F7 !important;
+}
+body.dark-mode .footer-desc,
+body.dark-mode .footer-links li a,
+body.dark-mode .social-link,
+body.dark-mode .footer-bottom p,
+body.dark-mode .footer-legal a {
+  color: #A1A1A6 !important;
+}
+body.dark-mode .footer-links li a:hover,
+body.dark-mode .social-link:hover,
+body.dark-mode .footer-legal a:hover {
+  color: var(--color-accent) !important;
 }

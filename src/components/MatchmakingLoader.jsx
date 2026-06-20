@@ -1,22 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './MatchmakingLoader.css';
 
 export default function MatchmakingLoader({ isActive, onComplete }) {
   const [currentStep, setCurrentStep] = useState(0);
 
   const steps = [
-    { number: 1, label: 'Analyzing Interests', icon: '🎯' },
-    { number: 2, label: 'Matching Guides', icon: '👥' },
-    { number: 3, label: 'Planning Itinerary', icon: '📅' },
-    { number: 4, label: 'Calculating Budget', icon: '💰' },
-    { number: 5, label: 'Assessing Safety', icon: '🛡️' }
+    { number: 1, label: 'Searching available guides', icon: '🔍' },
+    { number: 2, label: 'Checking guide ratings', icon: '⭐' },
+    { number: 3, label: 'Matching language preferences', icon: '🗣️' },
+    { number: 4, label: 'Optimizing travel experience', icon: '✈️' },
+    { number: 5, label: 'Finalizing recommendation', icon: '👑' }
   ];
+
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     if (!isActive) return;
 
     let stepInterval;
     let completeTimeout;
+
+    setCurrentStep(0);
 
     // Progress through steps
     stepInterval = setInterval(() => {
@@ -30,8 +37,8 @@ export default function MatchmakingLoader({ isActive, onComplete }) {
 
     // Complete after all steps are done
     completeTimeout = setTimeout(() => {
-      if (onComplete) {
-        onComplete();
+      if (onCompleteRef.current) {
+        onCompleteRef.current();
       }
     }, steps.length * 600 + 500);
 
@@ -39,7 +46,7 @@ export default function MatchmakingLoader({ isActive, onComplete }) {
       clearInterval(stepInterval);
       clearTimeout(completeTimeout);
     };
-  }, [isActive, steps.length, onComplete]);
+  }, [isActive, steps.length]);
 
   if (!isActive) return null;
 
@@ -49,8 +56,8 @@ export default function MatchmakingLoader({ isActive, onComplete }) {
     <div className="matchmaking-loader-overlay">
       <div className="matchmaking-loader-container">
         <div className="loader-header">
-          <h2>Creating Your Perfect Travel Plan</h2>
-          <p>Our AI is working its magic...</p>
+          <h2>Finding Your Perfect Guide</h2>
+          <p>Our Agentic Matchmaker is searching local registers...</p>
         </div>
 
         <div className="loader-steps">

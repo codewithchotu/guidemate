@@ -4,11 +4,13 @@ import React, { useEffect, useRef, useState } from 'react';
 const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
 const LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
 
-export default function GuideMap({ guides, onSelectGuide, city = 'Delhi', poiMarkers = null }) {
+export default function GuideMap({ guides, onSelectGuide, city = 'Delhi', poiMarkers = null, travelerLocation = null, customGuideLocation = null }) {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
   const poiMarkersRef = useRef([]);
+  const travelerMarkerRef = useRef(null);
+  const customGuideMarkerRef = useRef(null);
   const [leafletLoaded, setLeafletLoaded] = useState(false);
   const [selectedLayer, setSelectedLayer] = useState('all'); // 'all', 'guides', 'attractions', 'hotels', 'restaurants'
 
@@ -157,9 +159,11 @@ export default function GuideMap({ guides, onSelectGuide, city = 'Delhi', poiMar
         
         const popupContent = `
           <div style="font-family: inherit; min-width: 180px;">
-            <h4 style="margin: 0 0 4px 0; color: #4A1E25;">${guide.name}</h4>
-            <p style="margin: 0 0 4px 0; font-size: 12px; color: #666;">📍 ${guide.location}</p>
-            <p style="margin: 0 0 8px 0; font-size: 12px; color: #666;">⭐ ${guide.rating || '5.0'} (${guide.reviews || '95'} reviews)</p>
+            <div style="margin-bottom: 6px;"><span style="font-size: 9px; background-color: #6D2932; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase;">Local Guide</span></div>
+            <h4 style="margin: 4px 0 4px 0; color: #4A1E25;">${guide.name}</h4>
+            <p style="margin: 0 0 4px 0; font-size: 12px; color: #666;">📍 ${guide.location} (${guide.experience || '3 years'} Exp)</p>
+            <p style="margin: 0 0 4px 0; font-size: 12px; color: #666;">⭐ ${guide.rating || '5.0'} (${guide.reviews || '20'} reviews)</p>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #777; line-height: 1.3;">${guide.about || 'Verified local travel guide.'}</p>
             <button id="book-btn-${guide.id}" style="
               background-color: #6D2932;
               color: white;
@@ -227,15 +231,16 @@ export default function GuideMap({ guides, onSelectGuide, city = 'Delhi', poiMar
     // Show attractions if layer is 'all' or 'attractions'
     if ((selectedLayer === 'all' || selectedLayer === 'attractions') && poiMarkers.attractions) {
       poiMarkers.attractions.forEach(poi => {
-        const marker = L.marker([poi.lat, poi.lng], { 
+        const marker = L.marker([poi.lat || poi.latitude, poi.lng || poi.longitude], { 
           icon: createPoiIcon('attraction', '#FF6B6B') 
         }).addTo(map);
         
         marker.bindPopup(`
-          <div style="min-width: 140px;">
-            <h4 style="margin: 0 0 4px 0; color: #FF6B6B;">${poi.name}</h4>
+          <div style="min-width: 150px;">
+            <div style="margin-bottom: 4px;"><span style="font-size: 9px; background-color: #FF6B6B; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase;">Attraction</span></div>
+            <h4 style="margin: 4px 0 4px 0; color: #FF6B6B;">${poi.name}</h4>
             <p style="margin: 0 0 4px 0; font-size: 12px; color: #666;">⭐ ${poi.rating}</p>
-            <p style="margin: 0; font-size: 11px; color: #999;">${poi.description}</p>
+            <p style="margin: 0; font-size: 11px; color: #777; line-height: 1.3;">${poi.description}</p>
           </div>
         `);
         poiMarkersRef.current.push(marker);
@@ -245,15 +250,16 @@ export default function GuideMap({ guides, onSelectGuide, city = 'Delhi', poiMar
     // Show hotels if layer is 'all' or 'hotels'
     if ((selectedLayer === 'all' || selectedLayer === 'hotels') && poiMarkers.hotels) {
       poiMarkers.hotels.forEach(poi => {
-        const marker = L.marker([poi.lat, poi.lng], { 
+        const marker = L.marker([poi.lat || poi.latitude, poi.lng || poi.longitude], { 
           icon: createPoiIcon('hotel', '#4ECDC4') 
         }).addTo(map);
         
         marker.bindPopup(`
-          <div style="min-width: 140px;">
-            <h4 style="margin: 0 0 4px 0; color: #4ECDC4;">🏨 ${poi.name}</h4>
+          <div style="min-width: 150px;">
+            <div style="margin-bottom: 4px;"><span style="font-size: 9px; background-color: #4ECDC4; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase;">Hotel</span></div>
+            <h4 style="margin: 4px 0 4px 0; color: #4ECDC4;">${poi.name}</h4>
             <p style="margin: 0 0 4px 0; font-size: 12px; color: #666;">⭐ ${poi.rating}</p>
-            <p style="margin: 0; font-size: 11px; color: #999;">${poi.description}</p>
+            <p style="margin: 0; font-size: 11px; color: #777; line-height: 1.3;">${poi.description}</p>
           </div>
         `);
         poiMarkersRef.current.push(marker);
@@ -263,21 +269,128 @@ export default function GuideMap({ guides, onSelectGuide, city = 'Delhi', poiMar
     // Show restaurants if layer is 'all' or 'restaurants'
     if ((selectedLayer === 'all' || selectedLayer === 'restaurants') && poiMarkers.restaurants) {
       poiMarkers.restaurants.forEach(poi => {
-        const marker = L.marker([poi.lat, poi.lng], { 
+        const marker = L.marker([poi.lat || poi.latitude, poi.lng || poi.longitude], { 
           icon: createPoiIcon('restaurant', '#F4A261') 
         }).addTo(map);
         
         marker.bindPopup(`
-          <div style="min-width: 140px;">
-            <h4 style="margin: 0 0 4px 0; color: #F4A261;">🍽️ ${poi.name}</h4>
+          <div style="min-width: 150px;">
+            <div style="margin-bottom: 4px;"><span style="font-size: 9px; background-color: #F4A261; color: white; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase;">Restaurant</span></div>
+            <h4 style="margin: 4px 0 4px 0; color: #F4A261;">${poi.name}</h4>
             <p style="margin: 0 0 4px 0; font-size: 12px; color: #666;">⭐ ${poi.rating}</p>
-            <p style="margin: 0; font-size: 11px; color: #999;">${poi.description}</p>
+            <p style="margin: 0; font-size: 11px; color: #777; line-height: 1.3;">${poi.description}</p>
           </div>
         `);
         poiMarkersRef.current.push(marker);
       });
     }
-  }, [leafletLoaded, poiMarkers, selectedLayer]);
+  }, [leafletLoaded, poiMarkers, selectedLayer, city]);
+
+  // Render live traveler tracking marker
+  useEffect(() => {
+    if (!leafletLoaded || !mapInstanceRef.current) return;
+    const L = window.L;
+    const map = mapInstanceRef.current;
+
+    // Clear old traveler marker
+    if (travelerMarkerRef.current) {
+      travelerMarkerRef.current.remove();
+      travelerMarkerRef.current = null;
+    }
+
+    if (travelerLocation && travelerLocation.lat && travelerLocation.lng) {
+      const travelerIcon = L.divIcon({
+        className: 'live-traveler-tracking-marker',
+        html: `<div style="
+          width: 36px; 
+          height: 36px; 
+          background-color: #27AE60; 
+          border: 3px solid white; 
+          border-radius: 50%; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center;
+          font-size: 18px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          cursor: pointer;
+        ">👤</div>`,
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
+      });
+
+      const marker = L.marker([travelerLocation.lat, travelerLocation.lng], { icon: travelerIcon }).addTo(map);
+      marker.bindPopup(`
+        <div style="font-family: inherit; text-align: center; min-width: 140px;">
+          <h4 style="margin: 0; color: #27AE60;">👤 Live Traveler Position</h4>
+          <p style="margin: 4px 0 0 0; font-size: 11px; color: #666;">Sharing real-time location via browser GPS</p>
+        </div>
+      `);
+      travelerMarkerRef.current = marker;
+      
+      // Auto pan to traveler location for guide tracking convenience
+      map.panTo([travelerLocation.lat, travelerLocation.lng]);
+    }
+
+    return () => {
+      if (travelerMarkerRef.current) {
+        travelerMarkerRef.current.remove();
+        travelerMarkerRef.current = null;
+      }
+    };
+  }, [leafletLoaded, travelerLocation]);
+
+  // Render live guide tracking marker (for traveler client view)
+  useEffect(() => {
+    if (!leafletLoaded || !mapInstanceRef.current) return;
+    const L = window.L;
+    const map = mapInstanceRef.current;
+
+    // Clear old guide marker
+    if (customGuideMarkerRef.current) {
+      customGuideMarkerRef.current.remove();
+      customGuideMarkerRef.current = null;
+    }
+
+    if (customGuideLocation && customGuideLocation.lat && customGuideLocation.lng) {
+      const guideIcon = L.divIcon({
+        className: 'live-guide-tracking-marker',
+        html: `<div style="
+          width: 38px; 
+          height: 38px; 
+          background-color: #6D2932; 
+          border: 3px solid #C6A969; 
+          border-radius: 50%; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center;
+          font-size: 18px;
+          box-shadow: 0 4px 12px rgba(109,41,50,0.4);
+          cursor: pointer;
+        ">🙋‍♂️</div>`,
+        iconSize: [38, 38],
+        iconAnchor: [19, 19]
+      });
+
+      const marker = L.marker([customGuideLocation.lat, customGuideLocation.lng], { icon: guideIcon }).addTo(map);
+      marker.bindPopup(`
+        <div style="font-family: inherit; text-align: center; min-width: 140px;">
+          <h4 style="margin: 0; color: #6D2932;">🙋‍♂️ Your Matched Guide</h4>
+          <p style="margin: 4px 0 0 0; font-size: 11px; color: #666;">Approaching live - Real-time tracking active</p>
+        </div>
+      `);
+      customGuideMarkerRef.current = marker;
+
+      // Auto pan to show both or focus guide
+      map.panTo([customGuideLocation.lat, customGuideLocation.lng]);
+    }
+
+    return () => {
+      if (customGuideMarkerRef.current) {
+        customGuideMarkerRef.current.remove();
+        customGuideMarkerRef.current = null;
+      }
+    };
+  }, [leafletLoaded, customGuideLocation]);
 
   // Helper function to get category icons
   const getCategoryIcon = (category) => {

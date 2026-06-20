@@ -17,9 +17,11 @@ export function initSocketServer(server) {
     let clientUid = null;
     console.log('New WebSocket client connected.');
 
-    ws.on('message', async (message) => {
+    ws.on('message', async (data) => {
       try {
-        const packet = JSON.parse(message);
+        const messageString = data.toString();
+        console.log(`[Socket Server] Received packet raw: ${messageString}`);
+        const packet = JSON.parse(messageString);
         const { type, payload } = packet;
 
         switch (type) {
@@ -50,6 +52,48 @@ export function initSocketServer(server) {
               if (client.role === 'guide') {
                 await db.updateGuideStatus(clientUid, true, payload.lat, payload.lng);
                 broadcastOnlineGuides();
+
+                // Send live location update to the active traveler if in a current trip
+                const bookings = await db.getBookings();
+                const activeBooking = bookings.find(b => 
+                  b.guideId === clientUid && 
+                  (b.status === 'accepted' || b.status === 'in_progress' || b.status === 'guide_arriving')
+                );
+                if (activeBooking) {
+                  const travelerClient = connectedClients.get(activeBooking.travelerId);
+                  if (travelerClient) {
+                    travelerClient.ws.send(JSON.stringify({
+                      type: 'guide_location_update',
+                      payload: {
+                        bookingId: activeBooking.id,
+                        lat: payload.lat,
+                        lng: payload.lng
+                      }
+                    }));
+                  }
+                }
+              }
+
+              if (client.role === 'traveler') {
+                // Send live location update to the matched guide if in an active trip
+                const bookings = await db.getBookings();
+                const activeBooking = bookings.find(b => 
+                  b.travelerId === clientUid && 
+                  (b.status === 'accepted' || b.status === 'in_progress' || b.status === 'guide_arriving')
+                );
+                if (activeBooking) {
+                  const guideClient = connectedClients.get(activeBooking.guideId);
+                  if (guideClient) {
+                    guideClient.ws.send(JSON.stringify({
+                      type: 'traveler_location_update',
+                      payload: {
+                        bookingId: activeBooking.id,
+                        lat: payload.lat,
+                        lng: payload.lng
+                      }
+                    }));
+                  }
+                }
               }
             }
             break;
@@ -76,14 +120,25 @@ export function initSocketServer(server) {
             });
 
             // Rank by trustScore * rating
-            const sortedCandidates = candidates.sort((a, b) => {
+            let sortedCandidates = candidates.sort((a, b) => {
               const scoreA = (a.rating || 5) * (a.trustScore || 100);
               const scoreB = (b.rating || 5) * (b.trustScore || 100);
               return scoreB - scoreA;
             });
 
             if (sortedCandidates.length === 0) {
-              ws.send(JSON.stringify({ type: 'match_failed', payload: { reason: 'No matching guides online' } }));
+              console.log(`No online guides found for destination ${destination}. Simulating offline guide pairing for hackathon demo.`);
+              const cityGuides = allGuides.filter(g => !destination || g.location.toLowerCase() === destination.toLowerCase());
+              const fallbackGuides = cityGuides.length > 0 ? cityGuides : allGuides;
+              sortedCandidates = fallbackGuides.slice(0, 3).map(g => ({
+                ...g,
+                userId: g.userId || g.id,
+                online: true
+              }));
+            }
+
+            if (sortedCandidates.length === 0) {
+              ws.send(JSON.stringify({ type: 'match_failed', payload: { reason: 'No matching guides available' } }));
               break;
             }
 
@@ -177,6 +232,12 @@ export function initSocketServer(server) {
                 const successPayload = { bookingId, booking };
                 if (travelerWs) travelerWs.send(JSON.stringify({ type: 'match_confirmed', payload: successPayload }));
                 if (guideWs) guideWs.send(JSON.stringify({ type: 'match_confirmed', payload: successPayload }));
+
+                // If guide is offline (simulated), trigger movement simulation
+                if (!guideWs) {
+                  console.log(`Starting live GPS simulation for guide ${guideId} towards traveler ${state.travelerUid}`);
+                  simulateGuideMovement(bookingId, state.travelerUid, guideId);
+                }
 
                 activeMatchingRequests.delete(bookingId);
                 broadcastSupervisorTrips();
@@ -275,9 +336,15 @@ export function initSocketServer(server) {
     ws.on('close', async () => {
       if (clientUid) {
         const client = connectedClients.get(clientUid);
-        if (client && client.role === 'guide') {
-          await db.updateGuideStatus(clientUid, false);
-          broadcastOnlineGuides();
+        if (client) {
+          if (client.simulationInterval) {
+            clearInterval(client.simulationInterval);
+            console.log(`Cleared simulation interval for client ${clientUid}`);
+          }
+          if (client.role === 'guide') {
+            await db.updateGuideStatus(clientUid, false);
+            broadcastOnlineGuides();
+          }
         }
         connectedClients.delete(clientUid);
         console.log(`Client ${clientUid} disconnected.`);
@@ -301,12 +368,32 @@ export function initSocketServer(server) {
     }
 
     const currentGuide = state.candidates[state.currentIndex];
-    const guideWs = connectedClients.get(currentGuide.userId)?.ws;
+    const guideWs = connectedClients.get(currentGuide.userId || currentGuide.id)?.ws;
 
     if (!guideWs) {
-      // Guide disconnected in the meantime, move to next
-      state.currentIndex++;
-      queryNextGuide(bookingId);
+      console.log(`Simulating match request acceptance for guide ${currentGuide.name} (Offline fallback mode)`);
+      
+      // Send guide accepted message to the traveler after 1.5 seconds to feel realistic
+      setTimeout(async () => {
+        const travelerWs = connectedClients.get(state.travelerUid)?.ws;
+        if (travelerWs) {
+          travelerWs.send(JSON.stringify({
+            type: 'guide_accepted_request',
+            payload: {
+              bookingId,
+              guide: {
+                userId: currentGuide.userId || currentGuide.id,
+                name: currentGuide.name,
+                rating: currentGuide.rating || 4.8,
+                trustScore: currentGuide.trustScore || 98,
+                languages: currentGuide.languages || ['English'],
+                packages: currentGuide.packages || ['basic'],
+                eta: '5-10 mins'
+              }
+            }
+          }));
+        }
+      }, 1500);
       return;
     }
 
@@ -358,5 +445,55 @@ export function initSocketServer(server) {
         client.ws.send(packet);
       }
     }
+  }
+
+  // Helper: Simulate guide GPS coordinate movements closer to traveler
+  function simulateGuideMovement(bookingId, travelerUid, guideId) {
+    let step = 0;
+    const maxSteps = 10;
+    
+    db.getGuides().then(allGuides => {
+      const guide = allGuides.find(g => g.userId === guideId || g.id === guideId);
+      if (!guide) return;
+      
+      let guideLat = parseFloat(guide.lat) || 28.6139;
+      let guideLng = parseFloat(guide.lng) || 77.2090;
+      
+      const intervalId = setInterval(async () => {
+        const travelerClient = connectedClients.get(travelerUid);
+        if (!travelerClient) {
+          console.log(`Simulation traveler ${travelerUid} disconnected. Stopping GPS simulator.`);
+          clearInterval(intervalId);
+          return;
+        }
+        
+        const targetLat = travelerClient.lat || 28.6139;
+        const targetLng = travelerClient.lng || 77.2090;
+        
+        // Move 10% closer on each step
+        guideLat = guideLat + (targetLat - guideLat) * 0.15;
+        guideLng = guideLng + (targetLng - guideLng) * 0.15;
+        
+        travelerClient.ws.send(JSON.stringify({
+          type: 'guide_location_update',
+          payload: {
+            bookingId,
+            lat: guideLat,
+            lng: guideLng
+          }
+        }));
+        
+        step++;
+        if (step >= maxSteps) {
+          console.log(`Simulation complete. Guide has arrived near traveler.`);
+          clearInterval(intervalId);
+        }
+      }, 4000);
+      
+      const client = connectedClients.get(travelerUid);
+      if (client) {
+        client.simulationInterval = intervalId;
+      }
+    });
   }
 }

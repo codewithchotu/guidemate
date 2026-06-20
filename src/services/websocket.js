@@ -1,14 +1,17 @@
 // Real-time WebSocket Service
 let ws = null;
 const listeners = new Map(); // eventType -> Set of callbacks
+const sendQueue = []; // Queue messages sent while connecting
 
 export const wsService = {
   connect(uid, role, initialLat = null, initialLng = null) {
-    if (ws && ws.readyState === WebSocket.OPEN) return;
+    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
 
-    // Use current host for websocket connection (relative proxy configuration)
+    // Use direct IPv4 port 5000 when running locally, or relative host for production
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const host = isLocal ? '127.0.0.1:5000' : window.location.host;
+    const wsUrl = `${protocol}//${host}/ws`;
 
     console.log(`Connecting to WebSocket server: ${wsUrl}`);
     ws = new WebSocket(wsUrl);
@@ -20,6 +23,13 @@ export const wsService = {
         type: 'register',
         payload: { uid, role, lat: initialLat, lng: initialLng }
       }));
+
+      // Flush send queue
+      while (sendQueue.length > 0) {
+        const msg = sendQueue.shift();
+        console.log(`Flushing queued WebSocket message: ${msg.type}`);
+        ws.send(JSON.stringify(msg));
+      }
     };
 
     ws.onmessage = (event) => {
@@ -39,10 +49,16 @@ export const wsService = {
     ws.onclose = () => {
       console.log('WebSocket connection closed.');
       ws = null;
+      if (listeners.has('match_failed') && sendQueue.length > 0) {
+        listeners.get('match_failed').forEach(cb => cb({ reason: 'Connection lost. Matching failed.' }));
+      }
     };
 
     ws.onerror = (err) => {
       console.error('WebSocket error:', err);
+      if (listeners.has('match_failed')) {
+        listeners.get('match_failed').forEach(cb => cb({ reason: 'Failed to connect to real-time matchmaking server. Check your network or server status.' }));
+      }
     };
   },
 
@@ -51,6 +67,7 @@ export const wsService = {
       ws.close();
       ws = null;
     }
+    sendQueue.length = 0; // clear queue
   },
 
   subscribe(type, callback) {
@@ -71,7 +88,8 @@ export const wsService = {
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type, payload }));
     } else {
-      console.warn('WebSocket is not open. Message not sent:', type);
+      console.log(`WebSocket is not open. Queueing message: ${type}`);
+      sendQueue.push({ type, payload });
     }
   },
 
