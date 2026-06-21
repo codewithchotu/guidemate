@@ -19,7 +19,7 @@ export default function BudgetTracker() {
     { name: 'Guide Services', value: budget.guide, color: 'var(--color-maroon)', key: 'guide' },
     { name: 'Hotel Lodging', value: budget.hotel, color: 'var(--color-accent)', key: 'hotel' },
     { name: 'Dining & Street Food', value: budget.food, color: '#689F38', key: 'food' },
-    { name: 'Local Transport', value: budget.transport, color: '#1976D2', key: 'transport' },
+    { name: 'Local Transport', value: budget.transport, color: '#8B4545', key: 'transport' },
     { name: 'Sightseeing Activities', value: budget.activities, color: '#7B1FA2', key: 'activities' }
   ];
 

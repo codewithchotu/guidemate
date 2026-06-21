@@ -40,7 +40,7 @@ export default function Home() {
     {
       name: "Marcus Vance",
       role: "Culinary Blogger",
-      avatarBg: "linear-gradient(135deg, #60a5fa, #3b82f6)",
+      avatarBg: "linear-gradient(135deg, #A85555, #8B4545)",
       quote: "The street food crawl Abdul organized for us in Hyderabad was phenomenal. GuideMate's budget agent kept everything within what we planned, and we ate like royalty.",
       rating: 5
     }

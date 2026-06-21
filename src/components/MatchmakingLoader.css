@@ -75,20 +75,20 @@
 }
 
 .loader-step.active {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  background: linear-gradient(135deg, #8B4545 0%, #A85555 100%);
   animation: pulse 1s ease-in-out infinite;
 }
 
 .loader-step.completed {
-  background: var(--color-accent);
+  background: #8B4545;
 }
 
 @keyframes pulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(109, 41, 50, 0.7);
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.7);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(109, 41, 50, 0);
+    box-shadow: 0 0 0 10px rgba(13, 148, 136, 0);
   }
 }
 
@@ -156,7 +156,7 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  background: linear-gradient(90deg, #8B4545 0%, #A85555 100%);
   border-radius: 10px;
   transition: width 0.4s ease;
 }

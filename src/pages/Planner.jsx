@@ -355,12 +355,13 @@ export default function Planner() {
                 {agentLogs.map((log, index) => (
                   <div key={index} style={{
                     animation: "fadeIn 0.3s ease forwards",
-                    borderLeft: `3px solid ${index === 0 ? "#3b82f6" : index === 1 ? "#10b981" : index === 2 ? "#a78bfa" : "#ec4899"}`,
+                    borderLeft: `3px solid ${index === 0 ? "#8B4545" : index === 1 ? "#10b981" : index === 2 ? "#a78bfa" : "#ec4899"}`,
                     paddingLeft: "12px"
                   }}>
                     <strong style={{
-                      color: index === 0 ? "#3b82f6" : index === 1 ? "#10b981" : index === 2 ? "#a78bfa" : "#ec4899",
-                      fontSize: "0.9rem"
+                      color: index === 0 ? "#0F172A" : index === 1 ? "#10b981" : index === 2 ? "#a78bfa" : "#ec4899",
+                      fontSize: "0.9rem",
+                      fontWeight: 700
                     }}>
                       [{log.agent}]
                     </strong>

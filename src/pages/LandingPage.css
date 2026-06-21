@@ -8,7 +8,7 @@
 
 .hero {
   padding: var(--spacing-3xl) 0;
-  background: linear-gradient(135deg, #FFFFFF 0%, #FAF7F2 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -37,7 +37,7 @@
 }
 
 .hero-title .highlight {
-  color: var(--color-primary);
+  color: var(--color-text-primary);
 }
 
 .hero-subtitle {
@@ -232,7 +232,7 @@
   justify-content: center;
   width: 56px;
   height: 56px;
-  background: linear-gradient(135deg, rgba(109, 41, 50, 0.1), rgba(198, 169, 105, 0.1));
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.1), rgba(245, 158, 11, 0.1));
   border-radius: var(--radius-lg);
   color: var(--color-primary);
 }
@@ -320,7 +320,7 @@
 
 .cta-section {
   padding: var(--spacing-3xl) 0;
-  background: linear-gradient(135deg, #6D2932 0%, #4A1E25 100%);
+  background: linear-gradient(135deg, #0D9488 0%, #0F766E 100%);
 }
 
 .cta-content {

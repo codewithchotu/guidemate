@@ -73,7 +73,7 @@ export default function BuddyCard({ buddy }) {
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-dark)" }}>{buddy.name}</h3>
-            <span style={{ color: "#2563eb", display: "inline-flex" }} title="Verified Buddy">
+            <span style={{ color: "#0F172A", display: "inline-flex", fontWeight: 700 }} title="Verified Buddy">
               <ShieldCheck size={18} />
             </span>
           </div>

@@ -4,22 +4,22 @@
   position: sticky;
   top: 0;
   background-color: #FFFFFF !important;
-  border-bottom: 1px solid #EAEAEA !important;
+  border-bottom: 1px solid #E2E8F0 !important;
   z-index: 1000;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04) !important;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05) !important;
 }
 
 .logo-text {
   font-family: 'Playfair Display', serif;
   font-size: 24px;
   font-weight: 800;
-  color: var(--color-maroon);
+  color: #0D9488;
 }
 
 .navbar-link {
   font-family: 'Inter', sans-serif;
   font-size: 14px;
-  color: #444444;
+  color: #475569;
   font-weight: 500;
   transition: color 0.2s ease, opacity 0.2s ease;
   position: relative;
@@ -28,7 +28,7 @@
 }
 
 .navbar-link:hover {
-  color: var(--color-maroon) !important;
+  color: #0D9488 !important;
   opacity: 0.95;
 }
 
@@ -37,8 +37,8 @@
 }
 
 .dropdown-item:hover {
-  background-color: #F8F5F2 !important;
-  color: var(--color-maroon) !important;
+  background-color: #F5F5F5 !important;
+  color: #0D9488 !important;
 }
 
 .hover-opacity:hover {

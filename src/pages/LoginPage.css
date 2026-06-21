@@ -13,7 +13,7 @@
 .login-card {
   background-color: #FFFFFF;
   border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(109, 41, 50, 0.08);
+  box-shadow: 0 10px 40px rgba(13, 148, 136, 0.08);
   border: 1px solid var(--color-border);
   padding: 40px;
   width: 100%;
@@ -138,15 +138,15 @@
 }
 
 .role-btn:hover {
-  background-color: #FAF8F5;
+  background-color: #F5F5F5;
   border-color: var(--color-accent);
 }
 
 .role-btn.active {
-  background-color: #FAF7F2;
-  border-color: var(--color-maroon);
-  color: var(--color-maroon);
-  box-shadow: 0 2px 8px rgba(109, 41, 50, 0.05);
+  background-color: #FEF3C7;
+  border-color: #0D9488;
+  color: #0D9488;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.05);
 }
 
 .auth-trigger-section {

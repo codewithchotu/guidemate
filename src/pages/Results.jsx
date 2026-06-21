@@ -37,7 +37,7 @@ export default function Results() {
   const getWeatherIcon = (cond) => {
     switch (cond?.toLowerCase()) {
       case "sunny": return <Sun size={32} style={{ color: "#f59e0b" }} />;
-      case "rainy": return <CloudRain size={32} style={{ color: "#3b82f6" }} />;
+      case "rainy": return <CloudRain size={32} style={{ color: "#475569" }} />;
       default: return <CloudSun size={32} style={{ color: "#8b5cf6" }} />;
     }
   };
